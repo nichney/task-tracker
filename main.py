@@ -1,10 +1,35 @@
 #!/usr/bin/python
 # A simple CLI Task Tracker
 import argparse
-import sys
+import json
+from time import time
+
+def load_tasks():
+    try:
+        f = open('tasks.json', 'r')
+        return json.load(f)
+    except FileNotFoundError:
+        return []    
+
+def write_tasks(tasks):
+    data = json.dumps(tasks)
+    with open('tasks.json', 'w') as f:
+        f.write(data)
+
 
 def on_add(args):
-    pass
+    all_tasks = load_tasks()
+    if all_tasks:
+        last_id = all_tasks[-1]['id']
+    else:
+        last_id = 0
+    all_tasks.append({ 'id': last_id+1,
+                 'description': args.text[0],
+                 'status': 'todo',
+                 'createdAt': time(),
+                 'updatedAt': time()
+            })
+    write_tasks(all_tasks)
 
 def on_update(args):
     pass
