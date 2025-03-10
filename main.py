@@ -32,16 +32,35 @@ def on_add(args):
     write_tasks(all_tasks)
 
 def on_update(args):
-    pass
+    all_tasks = load_tasks()
+    for task in all_tasks:
+        if task['id'] == args.id:
+            task['description'] = ' '.join(args.text)
+            task['updatedAt'] = time()
+    write_tasks(all_tasks)
 
 def on_delete(args):
-    pass
+    all_tasks = load_tasks()
+    for task in all_tasks:
+        if task['id'] == args.id:
+            all_tasks.remove(task)
+    write_tasks(all_tasks)
 
 def mark_in_progress(args):
-    pass
+    all_tasks = load_tasks()
+    for task in all_tasks:
+        if task['id'] == args.id:
+            task['status'] = 'in-progress'
+            task['updatedAt'] = time()
+    write_tasks(all_tasks)
 
 def mark_done(args):
-    pass
+    all_tasks = load_tasks()
+    for task in all_tasks:
+        if task['id'] == args.id:
+            task['status'] = 'done'
+            task['updatedAt'] = time()
+    write_tasks(all_tasks)
 
 def list_tasks(args):
     all_tasks = load_tasks()
