@@ -44,7 +44,33 @@ def mark_done(args):
     pass
 
 def list_tasks(args):
-    pass
+    all_tasks = load_tasks()
+    
+    ID_WIDTH = 5
+    DESC_WIDTH = 20
+    STATUS_WIDTH = 15
+    TIME_WIDTH = 20
+    header = (
+        f"{'ID'.ljust(ID_WIDTH)} | "
+        f"{'Description'.ljust(DESC_WIDTH)} | "
+        f"{'Status'.ljust(STATUS_WIDTH)} | "
+        f"{'Created At'.ljust(TIME_WIDTH)} | "
+        f"{'Updated At'.ljust(TIME_WIDTH)}"
+    )
+    print(header)
+    print('-' * len(header))
+    # Filter tasks by status if required 
+    tasks_to_show = [task for task in all_tasks if task['status'] == args.status] if args.status else all_tasks
+    
+    for task in tasks_to_show:
+        row = (
+            f"{str(task['id']).ljust(ID_WIDTH)} | "
+            f"{task['description'].ljust(DESC_WIDTH)} | "
+            f"{task['status'].ljust(STATUS_WIDTH)} | "
+            f"{str(task['createdAt']).ljust(TIME_WIDTH)} | "
+            f"{str(task['updatedAt']).ljust(TIME_WIDTH)}"
+        )
+        print(row)
 
 
 if __name__ == '__main__':
