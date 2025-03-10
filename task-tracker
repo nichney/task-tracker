@@ -53,20 +53,22 @@ def on_update(args):
         if task['id'] == args.id:
             task['description'] = new_task_text
             task['updatedAt'] = time()
+            write_tasks(all_tasks)
+            return
     else:
         print(f'Error: task {args.id} not found')
         return
-    write_tasks(all_tasks)
 
 def on_delete(args):
     all_tasks = load_tasks()
     for task in all_tasks:
         if task['id'] == args.id:
             all_tasks.remove(task)
+            write_tasks(all_tasks)
+            return
     else:
         print(f'Error: task {args.id} not found')
         return
-    write_tasks(all_tasks)
 
 def mark_in_progress(args):
     all_tasks = load_tasks()
@@ -74,10 +76,11 @@ def mark_in_progress(args):
         if task['id'] == args.id:
             task['status'] = 'in-progress'
             task['updatedAt'] = time()
+            write_tasks(all_tasks)
+            return
     else:
         print(f'Error: task {args.id} not found')
         return
-    write_tasks(all_tasks)
 
 def mark_done(args):
     all_tasks = load_tasks()
@@ -85,10 +88,11 @@ def mark_done(args):
         if task['id'] == args.id:
             task['status'] = 'done'
             task['updatedAt'] = time()
+            write_tasks(all_tasks)
+            return
     else:
         print(f'Error: task {args.id} not found')
         return
-    write_tasks(all_tasks)
 
 def list_tasks(args):
     all_tasks = load_tasks()
