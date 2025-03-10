@@ -2,7 +2,7 @@
 # A simple CLI Task Tracker
 import argparse
 import json
-from time import time
+from time import time, gmtime, strftime
 
 def load_tasks():
     try:
@@ -10,11 +10,19 @@ def load_tasks():
         return json.load(f)
     except FileNotFoundError:
         return []    
+    except json.JSONDecodeError:
+        return []
+    except Exception as e:
+        print(f'Unexpected error: {e}')
+        return []
 
 def write_tasks(tasks):
-    data = json.dumps(tasks)
-    with open('tasks.json', 'w') as f:
-        f.write(data)
+    try:
+        data = json.dumps(tasks)
+        with open('tasks.json', 'w') as f:
+            f.write(data)
+    except Exception as e:
+        print(f'Error while saving tasks: {e}')
 
 
 def on_add(args):
@@ -23,8 +31,12 @@ def on_add(args):
         last_id = all_tasks[-1]['id']
     else:
         last_id = 0
+    task_text = ' '.join(args.text)
+    if not task_text:
+        print('Error: the description cannot be empty')
+        return
     all_tasks.append({ 'id': last_id+1,
-                 'description': args.text[0],
+                 'description': task_text,
                  'status': 'todo',
                  'createdAt': time(),
                  'updatedAt': time()
@@ -33,10 +45,17 @@ def on_add(args):
 
 def on_update(args):
     all_tasks = load_tasks()
+    new_task_text = ' '.join(args.text)
+    if not new_task_text:
+        print('Error: the description cannot be empty')
+        return
     for task in all_tasks:
         if task['id'] == args.id:
-            task['description'] = ' '.join(args.text)
+            task['description'] = new_task_text
             task['updatedAt'] = time()
+    else:
+        print(f'Error: task {args.id} not found')
+        return
     write_tasks(all_tasks)
 
 def on_delete(args):
@@ -44,6 +63,9 @@ def on_delete(args):
     for task in all_tasks:
         if task['id'] == args.id:
             all_tasks.remove(task)
+    else:
+        print(f'Error: task {args.id} not found')
+        return
     write_tasks(all_tasks)
 
 def mark_in_progress(args):
@@ -52,6 +74,9 @@ def mark_in_progress(args):
         if task['id'] == args.id:
             task['status'] = 'in-progress'
             task['updatedAt'] = time()
+    else:
+        print(f'Error: task {args.id} not found')
+        return
     write_tasks(all_tasks)
 
 def mark_done(args):
@@ -60,6 +85,9 @@ def mark_done(args):
         if task['id'] == args.id:
             task['status'] = 'done'
             task['updatedAt'] = time()
+    else:
+        print(f'Error: task {args.id} not found')
+        return
     write_tasks(all_tasks)
 
 def list_tasks(args):
@@ -80,14 +108,17 @@ def list_tasks(args):
     print('-' * len(header))
     # Filter tasks by status if required 
     tasks_to_show = [task for task in all_tasks if task['status'] == args.status] if args.status else all_tasks
-    
+
+
     for task in tasks_to_show:
+        creation_date = strftime('%Y-%m-%d %H:%M:%S', gmtime(task['createdAt']))
+        update_date = strftime('%Y-%m-%d %H:%M:%S', gmtime(task['updatedAt']))
         row = (
             f"{str(task['id']).ljust(ID_WIDTH)} | "
             f"{task['description'].ljust(DESC_WIDTH)} | "
             f"{task['status'].ljust(STATUS_WIDTH)} | "
-            f"{str(task['createdAt']).ljust(TIME_WIDTH)} | "
-            f"{str(task['updatedAt']).ljust(TIME_WIDTH)}"
+            f"{str(creation_date).ljust(TIME_WIDTH)} | "
+            f"{str(update_date).ljust(TIME_WIDTH)}"
         )
         print(row)
 
@@ -125,7 +156,7 @@ if __name__ == '__main__':
     done_parser.set_defaults(func=mark_done)
 
     # for list
-    list_parser = subparsers.add_parser('list', help='Mark task as done')
+    list_parser = subparsers.add_parser('list', help='List tasks')
     list_parser.add_argument('status', 
                             nargs='?', 
                             choices=['done', 'todo', 'in-progress'], 
