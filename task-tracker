@@ -98,7 +98,7 @@ def list_tasks(args):
     all_tasks = load_tasks()
     
     ID_WIDTH = 5
-    DESC_WIDTH = 20
+    DESC_WIDTH = max((len(task['description']) for task in all_tasks), default=20)
     STATUS_WIDTH = 15
     TIME_WIDTH = 20
     header = (
