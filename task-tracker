@@ -125,40 +125,25 @@ if __name__ == '__main__':
             description='A simple CLI Task Tracker')
     subparsers = parser.add_subparsers(required=True)
 
-    # for add
-    add_parser = subparsers.add_parser('add', help='Add a new task')
-    add_parser.add_argument('text', nargs='+', help='Task text')
-    add_parser.set_defaults(func=on_add)
+    commands = [
+        ('add', 'Add a new task', on_add, [('text', '+', 'Task text')]),
+        ('update', 'Update a task', on_update, [('id', 'int', 'Task ID'), ('text', '+', 'New task text')]),
+        ('delete', 'Delete a task', on_delete, [('id', 'int', 'Task ID')]),
+        ('mark-in-progress', 'Mark task as in-progress', mark_in_progress, [('id', 'int', 'Task ID')]),
+        ('mark-done', 'Mark task as done', mark_done, [('id', 'int', 'Task ID')]),
+        ('list', 'List tasks', list_tasks, [('status', '?', 'List tasks by status', ['done', 'todo', 'in-progress'])])
+    ]
 
-    # for update
-    update_parser = subparsers.add_parser('update', help='Update a task')
-    update_parser.add_argument('id', type=int, help='Task ID')
-    update_parser.add_argument('text', nargs='+', help='New task text')
-    update_parser.set_defaults(func=on_update)
-
-    # for delete
-    delete_parser = subparsers.add_parser('delete', help='Delete a task')
-    delete_parser.add_argument('id', type=int, help='Task ID')
-    delete_parser.set_defaults(func=on_delete)
-
-    # for mark-in-progress
-    in_progress_parser = subparsers.add_parser('mark-in-progress', help='Mark task as in-progress')
-    in_progress_parser.add_argument('id', type=int, help='Task ID')
-    in_progress_parser.set_defaults(func=mark_in_progress)
-
-    # for mark-done
-    done_parser = subparsers.add_parser('mark-done', help='Mark task as done')
-    done_parser.add_argument('id', type=int, help='Task ID')
-    done_parser.set_defaults(func=mark_done)
-
-    # for list
-    list_parser = subparsers.add_parser('list', help='List tasks')
-    list_parser.add_argument('status', 
-                            nargs='?', 
-                            choices=['done', 'todo', 'in-progress'], 
-                            help='List tasks by status')
-    list_parser.set_defaults(func=list_tasks)
-  
+    for cmd, help_text, func, args in commands:
+        subparser = subparsers.add_parser(cmd, help=help_text)
+        for arg_name, arg_type, arg_help, *choices in args:
+            if arg_type == '+':
+                subparser.add_argument(arg_name, nargs='+', help=arg_help)
+            elif arg_type == 'int':
+                subparser.add_argument(arg_name, type=int, help=arg_help)
+            elif arg_type == '?':
+                subparser.add_argument(arg_name, nargs='?', choices=choices[0], help=arg_help)
+        subparser.set_defaults(func=func)
 
     args=parser.parse_args()
     args.func(args)
