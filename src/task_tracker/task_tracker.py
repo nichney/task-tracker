@@ -119,7 +119,7 @@ def list_tasks(args):
             print(row)
 
 
-if __name__ == '__main__':
+def main():
     parser = argparse.ArgumentParser(
             prog='task-tracker',
             description='A simple CLI Task Tracker')
@@ -147,3 +147,6 @@ if __name__ == '__main__':
 
     args=parser.parse_args()
     args.func(args)
+
+if __name__ == '__main__':
+    main()

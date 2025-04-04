@@ -1,0 +1,23 @@
+[build-system]
+requires = ["setuptools", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "task_tracker"
+version = "0.1.0"
+readme = "README.md"
+license = "MIT"
+description = "A simple command-line task management tool that allows you to create, update, delete, and track the status of your tasks."
+requires-python = ">=3.9"
+
+[project.urls]
+Homepage = "https://github.com/nichney/task-tracker"
+
+[project.scripts]
+task-tracker = "task_tracker.task_tracker:main"
+
+[tool.setuptools]
+package-dir = {"" = "src"}
+
+[tool.setuptools.packages.find]
+where = ["src"]
