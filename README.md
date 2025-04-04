@@ -15,53 +15,50 @@ https://roadmap.sh/projects/task-tracker
 
 ## Installation
 
-1. Clone the repository:
 ```bash
 git clone https://github.com/nichney/task-tracker.git
 cd task-tracker
-```
-
-2. Make the script executable:
-```bash
-chmod +x task-tracker
+#virtual env - optionally
+pipenv shell
+pip install .
 ```
 
 ## Usage
 
 ### Adding a task
 ```bash
-./task-tracker add "Buy groceries"
+task-tracker add "Buy groceries"
 ```
 
 ### Updating a task
 ```bash
-./task-tracker update 1 "Buy more groceries"
+task-tracker update 1 "Buy more groceries"
 ```
 
 ### Deleting a task
 ```bash
-./task-tracker delete 1
+task-tracker delete 1
 ```
 
 ### Marking task as in-progress
 ```bash
-./task-tracker mark-in-progress 1
+task-tracker mark-in-progress 1
 ```
 
 ### Marking task as done
 ```bash
-./task-tracker mark-done 1
+task-tracker mark-done 1
 ```
 
 ### Listing tasks
 ```bash
 # List all tasks
-./task-tracker list
+task-tracker list
 
 # List tasks by status
-./task-tracker list todo
-./task-tracker list in-progress
-./task-tracker list done
+task-tracker list todo
+task-tracker list in-progress
+task-tracker list done
 ```
 
 ## Task Status
@@ -84,6 +81,12 @@ Tasks are stored in a JSON file (`tasks.json`) in the following format:
     "updatedAt": 1234567890
   }
 ]
+```
+
+## Testing project with tox
+``` bash 
+pip install tox
+tox
 ```
 
 ## License
